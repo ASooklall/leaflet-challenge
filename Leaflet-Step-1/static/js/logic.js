@@ -16,8 +16,8 @@
 
 // Create a map object
 var map = L.map("map", {
-    center: [40.7, -73.95],
-    zoom: 11
+    center: [37.09, -95.71],
+    zoom: 4
   });
   
 // Add tile layer
@@ -31,25 +31,22 @@ var map = L.map("map", {
 // set variable for geojson
 url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
 
-// Grab the data with d3
-// d3.json(url, data => {
-//     // Loop through data
-//     // data.forEach((d,i) => {
-//     //     var location = data[i].location;
-//     //     if (location){
-//     //         L.marker([location.coordinates[1], location.coordinates[0]]).addTo(map)
-//     //     }
-//     // })
-//     onEachFeature(function(feature, layer) {
-//         L.marker(`<p style="color:red">Zip Code: ${feature.properties.ZIP}</p> <hr> MHI: $${feature.properties.MHI2016}`)
-//       })
-//     // Add our marker cluster layer to the map
-//     map.addLayer(markers);
-//   });
+// marker size function
+function markerSize(magValue) {
+    return magValue / 10;
+  }
+// add markers to map
 d3.json(url, data =>{
 var layerGroup = L.geoJSON(data, {
     onEachFeature: function (feature, layer) {
-      layer.bindPopup('<h1>'+feature.properties.f1+'</h1><p>name: '+feature.properties.f2+'</p>');
+      layer.bindPopup(`<p>
+      Magnitude: ${feature.properties.mag} <br> 
+      Type: ${feature.properties.type} <br>
+      Place: ${feature.properties.place} <br> 
+      Time: ${new Date(feature.properties.time)} <br>
+      <a href="${feature.properties.url}">Click To View USGS Map Details</a> <br>
+      <a href="${feature.properties.detail}">Click for More Details (JSON)</a>
+      </p>`);
     }
   }).addTo(map);
 });
