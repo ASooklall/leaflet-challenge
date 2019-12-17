@@ -1,7 +1,7 @@
 # leaflet-challenge
 Assignment 17 - Leaflet.js Geomapping
 
-Note: Create a config.js file and add the following line "var API_Key = "API HERE"
+Note: Create a config.js file and add the following line "var API_KEY = "API HERE"
 * Replace the "API HERE" with your API Key within quotations.
 
 Instructions for Assignment:
