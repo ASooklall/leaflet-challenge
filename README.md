@@ -16,6 +16,11 @@
 
 ### Versions:
 #### Level 1:
+* Located in Leaflet-Step-1
 * Completed submission for assignment.
+* Contains:
+    * Working map with live data for earthquakes within a 7 day period.
+    * Dynamic scaling for marker size and color based on earthquake intensity.
+    * Legend that shows ranges for colors.
 #### Level 2:
 * In progress.
