@@ -3,7 +3,7 @@
 ### Requirements:
 * Javascript, HTML5
 * Mapbox API Key
-* * https://account.mapbox.com/access-tokens/
+    * https://account.mapbox.com/access-tokens/
 
 ### Instructions:
 * Before running the script, create a file titled "config.js" in "/static/js" directory.
