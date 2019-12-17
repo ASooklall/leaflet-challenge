@@ -12,3 +12,10 @@
 * After you have the requirements met, run index.html on a live server.
 * The map should load automatically with all reported earthquakes within the last 7 days.
 * When you click a marker, it will open a tooltip with expanded information on the incident.
+
+
+## Versions:
+### Level 1:
+* Completed submission for assignment.
+### Level 2:
+* In progress.
