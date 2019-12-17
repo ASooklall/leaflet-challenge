@@ -14,6 +14,34 @@
 /////// Begin Script //////
 ///////////////////////////
 
+// set variable for geojson
+url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
+
+
+///////////////////////////
+///// Define Functions ////
+///////////////////////////
+
+// marker size function
+function markerSize(magValue) {
+    return magValue * 3;
+};
+
+// color function using ternary conditional
+function colorScale(colorValue) {
+    return colorValue > 5 ? '#FF3200' :
+           colorValue > 4 ? '#FF6C00' :
+           colorValue > 3 ? '#FFAD00' :
+           colorValue > 2 ? '#FFCC00' :
+           colorValue > 1 ? '#FFF700' :
+                            '#D9FF00';
+};
+
+
+///////////////////////////
+//////// Create Map ///////
+///////////////////////////
+
 // Create a map object
 var map = L.map("map", {
     center: [37.09, -95.71],
@@ -28,35 +56,8 @@ var map = L.map("map", {
     accessToken: API_KEY
   }).addTo(map);
   
-// set variable for geojson
-url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
 
-// marker size function
-function markerSize(magValue) {
-    return magValue * 3;
-};
-
-// ternary conditional for color
-// function colorScale(colorValue){
-//     if (colorValue <= 0 && colorValue >= 1){
-//         return "orange"
-//     }
-//     else if (colorValue < 5) and (colorValue >=4{
-
-//     }
-//     return "black";
-// }
-
-function colorScale(colorValue) {
-    return colorValue > 5 ? '#FF3200' :
-           colorValue > 4 ? '#FF6C00' :
-           colorValue > 3 ? '#FFAD00' :
-           colorValue > 2 ? '#FFCC00' :
-           colorValue > 1 ? '#FFF700' :
-                            '#D9FF00';
-}
-
-
+// add markers
 d3.json(url, data => {
     console.log(data.features[0].properties.mag)
     L.geoJSON(data, {
@@ -81,22 +82,6 @@ d3.json(url, data => {
         }
   }).addTo(map);
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ///////////////////////////////////////////////////////////////////
