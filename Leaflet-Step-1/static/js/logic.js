@@ -74,14 +74,34 @@ d3.json(url, data => {
         layer.bindPopup(`<p>
         Magnitude: ${feature.properties.mag} <br> 
         Type: ${feature.properties.type} <br>
-        Place: ${feature.properties.place} <br> 
         Time: ${new Date(feature.properties.time)} <br>
-        <a href="${feature.properties.url}">Click To View USGS Map Details</a> <br>
-        <a href="${feature.properties.detail}">Click for More Details (JSON)</a>
+        Place: ${feature.properties.place} <br> 
+        Latitude: ${feature.geometry.coordinates[1]} <br>
+        Longitude: ${feature.geometry.coordinates[0]} <br>
+        <a href="${feature.properties.url}" target="_blank">Click To View USGS Map Details</a> <br>
+        <a href="${feature.properties.detail}" target="_blank">Click for More Details (JSON)</a>
         </p>`);
         }
   }).addTo(map);
 });
+
+
+var legend = L.control({ position: 'bottomright' })
+legend.onAdd = function (map) {
+  var div = L.DomUtil.create('div', 'info legend')
+  var limits = [0, 1, 2, 3, 4 , 5]
+//   var colors = ['#D9FF00', '#FFF700', '#FFCC00', '#FFAD00', '#FF6C00', '#FF3200']
+  var labels = []
+
+  for (var i = 0; i < limits.length; i++) {
+    div.innerHTML +=
+    '<i style="background:' + colorScale(limits[i] + 1) + '"></i> ' +
+    limits[i] + (limits[i + 1] ? '&ndash;' + limits[i + 1] + '<br>' : '+');
+}
+
+return div;
+};
+legend.addTo(map);
 
 
 ///////////////////////////////////////////////////////////////////
