@@ -92,11 +92,11 @@ legend.onAdd = function (map) {
   var limits = [0, 1, 2, 3, 4 , 5]
   var labels = []
 
-  for (var i = 0; i < limits.length; i++) {
+  for (let i = 0; i < limits.length; i++) {
     div.innerHTML +=
     '<i style="background:' + colorScale(limits[i] + 1) + '"></i> ' +
     limits[i] + (limits[i + 1] ? '&ndash;' + limits[i + 1] + '<br>' : '+');
-}
+    }
 
 return div;
 };
