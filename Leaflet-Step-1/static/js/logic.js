@@ -33,21 +33,65 @@ url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojso
 
 // marker size function
 function markerSize(magValue) {
-    return magValue / 10;
+    return magValue * 50;
   }
+  
 // add markers to map
-d3.json(url, data =>{
-var layerGroup = L.geoJSON(data, {
-    onEachFeature: function (feature, layer) {
-      layer.bindPopup(`<p>
-      Magnitude: ${feature.properties.mag} <br> 
-      Type: ${feature.properties.type} <br>
-      Place: ${feature.properties.place} <br> 
-      Time: ${new Date(feature.properties.time)} <br>
-      <a href="${feature.properties.url}">Click To View USGS Map Details</a> <br>
-      <a href="${feature.properties.detail}">Click for More Details (JSON)</a>
-      </p>`);
-    }
+// d3.json(url, data =>{
+// var layerGroup = L.geoJSON(data, {
+//     onEachFeature: function (feature, layer) {
+//       layer.bindPopup(`<p>
+//       Magnitude: ${feature.properties.mag} <br> 
+//       Type: ${feature.properties.type} <br>
+//       Place: ${feature.properties.place} <br> 
+//       Time: ${new Date(feature.properties.time)} <br>
+//       <a href="${feature.properties.url}">Click To View USGS Map Details</a> <br>
+//       <a href="${feature.properties.detail}">Click for More Details (JSON)</a>
+//       </p>`);
+//     }
+//   }).addTo(map);
+// });
+
+// d3.json(url, data =>{
+//     L.geoJSON(data, {
+//         pointToLayer: function (geoJsonPoint, latlng) {
+//             return L.marker(latlng);
+//             },
+//         onEachFeature: function (feature, layer) {
+//         layer.bindPopup(`<p>
+//         Magnitude: ${feature.properties.mag} <br> 
+//         Type: ${feature.properties.type} <br>
+//         Place: ${feature.properties.place} <br> 
+//         Time: ${new Date(feature.properties.time)} <br>
+//         <a href="${feature.properties.url}">Click To View USGS Map Details</a> <br>
+//         <a href="${feature.properties.detail}">Click for More Details (JSON)</a>
+//         </p>`);
+//         }
+//   }).addTo(map);
+// });
+
+d3.json(url, data => {
+    console.log(data.features[0].properties.mag)
+    L.geoJSON(data, {
+        pointToLayer: function (feature, latlng) {
+            return L.circleMarker((feature, latlng), {
+                fillOpacity: 0.75,
+                color: "black",
+                weight: 1,
+                fillColor: "purple",
+                radius: feature.properties.mag * 3
+            });
+            },
+        onEachFeature: function (feature, layer) {
+        layer.bindPopup(`<p>
+        Magnitude: ${feature.properties.mag} <br> 
+        Type: ${feature.properties.type} <br>
+        Place: ${feature.properties.place} <br> 
+        Time: ${new Date(feature.properties.time)} <br>
+        <a href="${feature.properties.url}">Click To View USGS Map Details</a> <br>
+        <a href="${feature.properties.detail}">Click for More Details (JSON)</a>
+        </p>`);
+        }
   }).addTo(map);
 });
 
