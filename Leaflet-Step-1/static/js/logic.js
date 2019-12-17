@@ -33,42 +33,29 @@ url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojso
 
 // marker size function
 function markerSize(magValue) {
-    return magValue * 50;
-  }
-  
-// add markers to map
-// d3.json(url, data =>{
-// var layerGroup = L.geoJSON(data, {
-//     onEachFeature: function (feature, layer) {
-//       layer.bindPopup(`<p>
-//       Magnitude: ${feature.properties.mag} <br> 
-//       Type: ${feature.properties.type} <br>
-//       Place: ${feature.properties.place} <br> 
-//       Time: ${new Date(feature.properties.time)} <br>
-//       <a href="${feature.properties.url}">Click To View USGS Map Details</a> <br>
-//       <a href="${feature.properties.detail}">Click for More Details (JSON)</a>
-//       </p>`);
-//     }
-//   }).addTo(map);
-// });
+    return magValue * 3;
+};
 
-// d3.json(url, data =>{
-//     L.geoJSON(data, {
-//         pointToLayer: function (geoJsonPoint, latlng) {
-//             return L.marker(latlng);
-//             },
-//         onEachFeature: function (feature, layer) {
-//         layer.bindPopup(`<p>
-//         Magnitude: ${feature.properties.mag} <br> 
-//         Type: ${feature.properties.type} <br>
-//         Place: ${feature.properties.place} <br> 
-//         Time: ${new Date(feature.properties.time)} <br>
-//         <a href="${feature.properties.url}">Click To View USGS Map Details</a> <br>
-//         <a href="${feature.properties.detail}">Click for More Details (JSON)</a>
-//         </p>`);
-//         }
-//   }).addTo(map);
-// });
+// ternary conditional for color
+// function colorScale(colorValue){
+//     if (colorValue <= 0 && colorValue >= 1){
+//         return "orange"
+//     }
+//     else if (colorValue < 5) and (colorValue >=4{
+
+//     }
+//     return "black";
+// }
+
+function colorScale(colorValue) {
+    return colorValue > 5 ? '#FF3200' :
+           colorValue > 4 ? '#FF6C00' :
+           colorValue > 3 ? '#FFAD00' :
+           colorValue > 2 ? '#FFCC00' :
+           colorValue > 1 ? '#FFF700' :
+                            '#D9FF00';
+}
+
 
 d3.json(url, data => {
     console.log(data.features[0].properties.mag)
@@ -78,8 +65,8 @@ d3.json(url, data => {
                 fillOpacity: 0.75,
                 color: "black",
                 weight: 1,
-                fillColor: "purple",
-                radius: feature.properties.mag * 3
+                fillColor: colorScale(feature.properties.mag),
+                radius: markerSize(feature.properties.mag)
             });
             },
         onEachFeature: function (feature, layer) {
