@@ -14,8 +14,8 @@
 * When you click a marker, it will open a tooltip with expanded information on the incident.
 
 
-## Versions:
-### Level 1:
+### Versions:
+#### Level 1:
 * Completed submission for assignment.
-### Level 2:
+#### Level 2:
 * In progress.
