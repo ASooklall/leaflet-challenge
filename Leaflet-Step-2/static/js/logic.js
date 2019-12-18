@@ -42,12 +42,14 @@ function colorScale(colorValue) {
 //////// Create Map ///////
 ///////////////////////////
 
-// add markers
-earthquakeMarkers = [];
+// Array Placeholders for Markers
+var earthquakeMarkers = []
+var faultlineMarkers = []
 
+// Earthquake Markers
 d3.json(url, data => {
     console.log(data.features[0].properties.mag)
-    earthquakeMarkers.push(L.geoJSON(data, {
+    L.geoJSON(data, {
         pointToLayer: function (feature, latlng) {
             return L.circleMarker((feature, latlng), {
                 fillOpacity: 0.75,
@@ -58,7 +60,7 @@ d3.json(url, data => {
             });
             },
         onEachFeature: function (feature, layer) {
-        layer.bindPopup(`<p>
+          layer.bindPopup(`<p>
         Magnitude: ${feature.properties.mag} <br> 
         Type: ${feature.properties.type} <br>
         Time: ${new Date(feature.properties.time)} <br>
@@ -69,28 +71,11 @@ d3.json(url, data => {
         <a href="${feature.properties.detail}" target="_blank">Click for More Details (JSON)</a>
         </p>`);
         }
-  }));
+  });
 });
 
-// set markers to layer
-var earthquakeLayer = L.layerGroup(earthquakeMarkers);
-
-// add legend
-var legend = L.control({ position: 'bottomright' })
-legend.onAdd = function (map) {
-  var div = L.DomUtil.create('div', 'info legend')
-  var limits = [0, 1, 2, 3, 4 , 5]
-  var labels = []
-
-  for (let i = 0; i < limits.length; i++) {
-    div.innerHTML +=
-    '<i style="background:' + colorScale(limits[i] + 1) + '"></i> ' +
-    limits[i] + (limits[i + 1] ? '&ndash;' + limits[i + 1] + '<br>' : '+');
-    }
-
-return div;
-};
-legend.addTo(map);
+console.log(earthquakeMarkers)
+// Faultline Polygons
 
 
 
@@ -110,23 +95,55 @@ var dark = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?acc
   accessToken: API_KEY
 });
 
-// Base Layer
+// Base Layers
 var baseMaps = {
-  Light: light,
-  Dark: dark
+  "Light Map": light,
+  "Dark Map": dark
 };
 
-// Overlays
+// Set LayerGroups
+var earthquakeLayer = L.layerGroup(earthquakeMarkers);
+var faultlineLayer = L.layerGroup(faultlineMarkers);
+
+console.log(earthquakeLayer)
+// Overlays Layers
 var overlayMaps = {
-  Earthquakes: earthquakeLayer
+  "Earthquakes": earthquakeLayer,
+  "Faultlines": faultlineLayer
 };
 
 // Create a map object
 var map = L.map("map", {
   center: [37.09, -95.71],
   zoom: 4,
-  layers: [light, earthquakeLayer]
+  layers: [light, earthquakeLayer, faultlineLayer]
 });
+
+// Pass our map layers into our layer control
+// Add the layer control to the map
+L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+
+// // add legend
+// var legend = L.control({ position: 'bottomright' })
+// legend.onAdd = function (map) {
+//   var div = L.DomUtil.create('div', 'info legend')
+//   var limits = [0, 1, 2, 3, 4 , 5]
+//   var labels = []
+
+//   for (let i = 0; i < limits.length; i++) {
+//     div.innerHTML +=
+//     '<i style="background:' + colorScale(limits[i] + 1) + '"></i> ' +
+//     limits[i] + (limits[i + 1] ? '&ndash;' + limits[i + 1] + '<br>' : '+');
+//     }
+
+// return div;
+// };
+// legend.addTo(map);
+
+
+
+
 ///////////////////////////////////////////////////////////////////
 ////////////////////////// End of Script //////////////////////////
 ///////////////////////////////////////////////////////////////////
