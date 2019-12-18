@@ -15,8 +15,8 @@
 ///////////////////////////
 
 // set variable for geojson
-url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
-
+eqURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson" // for earthquake data
+flURL = "static/data/PB2002_steps.json" // for faultline data
 
 ///////////////////////////
 ///// Define Functions ////
@@ -39,16 +39,17 @@ function colorScale(colorValue) {
 
 
 ///////////////////////////
-//////// Create Map ///////
+////// Create Markers /////
 ///////////////////////////
 
-// Array Placeholders for Markers
-var earthquakeMarkers = []
-var faultlineMarkers = []
+// Set LayerGroups
+var earthquakeLayer = L.layerGroup();
+var faultlineLayer = L.layerGroup();
+
 
 // Earthquake Markers
-d3.json(url, data => {
-    console.log(data.features[0].properties.mag)
+d3.json(eqURL, data => {
+    // console.log(data.features[0].properties.mag)
     L.geoJSON(data, {
         pointToLayer: function (feature, latlng) {
             return L.circleMarker((feature, latlng), {
@@ -71,41 +72,63 @@ d3.json(url, data => {
         <a href="${feature.properties.detail}" target="_blank">Click for More Details (JSON)</a>
         </p>`);
         }
-  });
+  }).addTo(earthquakeLayer)
 });
 
-console.log(earthquakeMarkers)
 // Faultline Polygons
+d3.json(flURL, data => {
+  // console.log(data.features[0].geometry.coordinates)
+  L.geoJSON(data, {
+    style: {
+      "color": "#ffa600",
+      "weight": 3,
+      "opacity": 1
+    }
+  }).addTo(faultlineLayer)
+});
 
 
-
+///////////////////////////
+//////// Create Map ///////
+///////////////////////////
 
 // Tile Layers
-var light = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
+var lightMap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
   attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
   maxZoom: 18,
   id: "mapbox.light",
   accessToken: API_KEY
 });
 
-var dark = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
+var darkMap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
   attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
   maxZoom: 18,
   id: "mapbox.dark",
   accessToken: API_KEY
 });
 
+var satelliteMap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
+  attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+  maxZoom: 18,
+  id: "mapbox.satellite",
+  accessToken: API_KEY
+});
+
+var streetMap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
+  attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+  maxZoom: 18,
+  id: "mapbox.streets",
+  accessToken: API_KEY
+});
+
 // Base Layers
 var baseMaps = {
-  "Light Map": light,
-  "Dark Map": dark
+  "Light Map": lightMap,
+  "Dark Map": darkMap,
+  "Satellite Map": satelliteMap,
+  "Street Map": streetMap
 };
 
-// Set LayerGroups
-var earthquakeLayer = L.layerGroup(earthquakeMarkers);
-var faultlineLayer = L.layerGroup(faultlineMarkers);
-
-console.log(earthquakeLayer)
 // Overlays Layers
 var overlayMaps = {
   "Earthquakes": earthquakeLayer,
@@ -116,31 +139,29 @@ var overlayMaps = {
 var map = L.map("map", {
   center: [37.09, -95.71],
   zoom: 4,
-  layers: [light, earthquakeLayer, faultlineLayer]
+  layers: [satelliteMap, earthquakeLayer, faultlineLayer]
 });
 
-// Pass our map layers into our layer control
-// Add the layer control to the map
+// Layer Control
 L.control.layers(baseMaps, overlayMaps).addTo(map);
 
 
-// // add legend
-// var legend = L.control({ position: 'bottomright' })
-// legend.onAdd = function (map) {
-//   var div = L.DomUtil.create('div', 'info legend')
-//   var limits = [0, 1, 2, 3, 4 , 5]
-//   var labels = []
+// Legend
+var legend = L.control({ position: 'bottomright' })
+legend.onAdd = function (map) {
+  var div = L.DomUtil.create('div', 'info legend')
+  var limits = [0, 1, 2, 3, 4 , 5]
+  var labels = []
 
-//   for (let i = 0; i < limits.length; i++) {
-//     div.innerHTML +=
-//     '<i style="background:' + colorScale(limits[i] + 1) + '"></i> ' +
-//     limits[i] + (limits[i + 1] ? '&ndash;' + limits[i + 1] + '<br>' : '+');
-//     }
+  for (let i = 0; i < limits.length; i++) {
+    div.innerHTML +=
+    '<i style="background:' + colorScale(limits[i] + 1) + '"></i> ' +
+    limits[i] + (limits[i + 1] ? '&ndash;' + limits[i + 1] + '<br>' : '+');
+    }
 
-// return div;
-// };
-// legend.addTo(map);
-
+return div;
+};
+legend.addTo(map);
 
 
 

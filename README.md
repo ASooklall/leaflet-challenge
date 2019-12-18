@@ -23,4 +23,17 @@
     * Dynamic scaling for marker size and color based on earthquake intensity.
     * Legend that shows ranges for colors.
 #### Level 2:
-* In progress.
+* Located in Leaflet-Step-2
+* Completed submission for assignment.
+* Contains:
+    * Everything in Step 1 modified to be layers that can be turned on/off.
+    * A faultline layer that shows the location of tectonic plates
+        * Dataset for geojson is included in '/static/data/'
+    * Multiple base layers for different views
+        * Default base layer is satellite but can be changed in the logic.js
+
+### Credit:
+* Earthquake Data
+    * https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson
+* Faultline Data
+    * https://github.com/fraxen/tectonicplates
