@@ -42,25 +42,12 @@ function colorScale(colorValue) {
 //////// Create Map ///////
 ///////////////////////////
 
-// Create a map object
-var map = L.map("map", {
-    center: [37.09, -95.71],
-    zoom: 4
-  });
-  
-// Add tile layer
-  L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
-    attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
-    maxZoom: 18,
-    id: "mapbox.light",
-    accessToken: API_KEY
-  }).addTo(map);
-  
-
 // add markers
+earthquakeMarkers = [];
+
 d3.json(url, data => {
     console.log(data.features[0].properties.mag)
-    L.geoJSON(data, {
+    earthquakeMarkers.push(L.geoJSON(data, {
         pointToLayer: function (feature, latlng) {
             return L.circleMarker((feature, latlng), {
                 fillOpacity: 0.75,
@@ -82,8 +69,11 @@ d3.json(url, data => {
         <a href="${feature.properties.detail}" target="_blank">Click for More Details (JSON)</a>
         </p>`);
         }
-  }).addTo(map);
+  }));
 });
+
+// set markers to layer
+var earthquakeLayer = L.layerGroup(earthquakeMarkers);
 
 // add legend
 var legend = L.control({ position: 'bottomright' })
@@ -103,6 +93,40 @@ return div;
 legend.addTo(map);
 
 
+
+
+// Tile Layers
+var light = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
+  attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+  maxZoom: 18,
+  id: "mapbox.light",
+  accessToken: API_KEY
+});
+
+var dark = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
+  attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+  maxZoom: 18,
+  id: "mapbox.dark",
+  accessToken: API_KEY
+});
+
+// Base Layer
+var baseMaps = {
+  Light: light,
+  Dark: dark
+};
+
+// Overlays
+var overlayMaps = {
+  Earthquakes: earthquakeLayer
+};
+
+// Create a map object
+var map = L.map("map", {
+  center: [37.09, -95.71],
+  zoom: 4,
+  layers: [light, earthquakeLayer]
+});
 ///////////////////////////////////////////////////////////////////
 ////////////////////////// End of Script //////////////////////////
 ///////////////////////////////////////////////////////////////////
